@@ -1,0 +1,48 @@
+<html>
+<head>
+  <title>Test</title>
+</head>
+<body>
+  <!-- importing the automatically build module -->
+  <script src="../dist/edfdecoder.umd.js"></script>
+
+  <!-- The minified version is also accessible -->
+  <!-- <script src="../dist/edfdecoder.umd.min.js"></script> -->
+  Open EDF file <input type="file" id="fileInput">
+  <p>Open Javascript console.</p>
+
+  <script>
+    var fileInput = document.getElementById('fileInput');
+
+    // the foo object is part of our edfdecoder module
+    var decoder = new edfdecoder.EdfDecoder();
+
+
+
+    // event listener of the file dialog, it then triggers the file decoding
+    fileInput.addEventListener('change', function(e) {
+      var files = e.target.files;
+      var reader = new FileReader();
+
+      if( !files.length ){
+        return;
+      }
+
+      reader.onloadend = function(event) {
+        var buffer = event.target.result;
+        readEdfFile(buffer);
+      }
+      reader.readAsArrayBuffer( files[0] );
+  	});
+
+
+    function readEdfFile( buff ){
+      decoder.setInput( buff );
+      decoder.decode();
+    }
+
+
+  </script>
+
+</body>
+</html>

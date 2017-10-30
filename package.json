@@ -1,0 +1,40 @@
+{
+  "name": "edfdecoder",
+  "version": "0.1.0",
+  "description": "A starting point to create ES6 module for browser",
+  "repository": "jonathanlurie/edfdecoder",
+  "moduleName": "edfdecoder",
+  "entry": "src/main.js",
+  "main": "dist/edfdecoder.cjs.es5.js",
+  "commonjs": "dist/edfdecoder.cjs.js",
+  "module": "dist/edfdecoder.module.js",
+  "browser": "dist/edfdecoder.umd.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c",
+    "dev": "serve . & rollup -w -c rollup.config.dev.js",
+    "build-min": "npm run build && printf \"// Build date: $(date '+%Y-%m%-dT%H:%M:%S')\n\n\" > dist/edfdecoder.umd.min.js && cat header.txt >> dist/edfdecoder.umd.min.js && google-closure-compiler-js dist/edfdecoder.umd.js >> dist/edfdecoder.umd.min.js",
+    "doc": "documentation src/main.js -o ./doc/ -f html",
+    "all": "npm run build; npm run build-min; npm run doc"
+  },
+  "author": "Jonathan Lurie",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "documentation": "^3.0.4",
+    "google-closure-compiler-js": "^20170218.0.0",
+    "rollup": "^0.50.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "serve": "^6.3.1"
+  },
+  "dependencies": {
+    "@petamoriken/float16": "^1.0.6",
+    "codecutils": "github:Pixpipe/codecutils"
+  }
+}
