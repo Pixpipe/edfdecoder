@@ -5,10 +5,6 @@
 * Lab       MCIN - http://mcin.ca/ - Montreal Neurological Institute
 */
 
-//import { Float16Array, getFloat16, setFloat16, hfround } from "@petamoriken/float16";
-//import * as f16 from "@petamoriken/float16";
-import Float16Array from "@petamoriken/float16";
-import getFloat16 from "@petamoriken/float16";
 
 import { CodecUtils } from 'codecutils';
 
@@ -40,8 +36,7 @@ class EdfDecoder {
 
     if( offset ){
       try{
-        //this._decodeData( offset );
-        this._decodeDataFloat16( offset );
+        this._decodeData( offset );
       }catch(e){
         console.warn( e );
         this._output = null;
@@ -156,6 +151,11 @@ class EdfDecoder {
   }
 
 
+  /**
+  * [PRIVATE]
+  * Decodes the data. Must be called after the header is decoded.
+  * @param {Number} byteOffset - byte size of the header
+  */
   _decodeData( byteOffset ){
     if(! this._inputBuffer ){
       console.warn("A input buffer must be specified.");
@@ -167,66 +167,46 @@ class EdfDecoder {
       return;
     }
 
-
     var sampleType = Int16Array;
     var header = this._output.header;
-    var signals = [];
-    this._output.signals = signals;
-
+    
+    // the raw signal is the digital signal
+    var rawSignals = [];
+    this._output.rawSignals = rawSignals;
+    var physicalSignals = [];
+    this._output.physicalSignals = physicalSignals;
+    
     var signalOffset = 0;
 
     for(var i=0; i<header.nbSignals; i++){
       var signalNbSamples = header.signalInfo[i].nbOfSamples * header.nbDataRecords;
-      var signal = CodecUtils.extractTypedArray( this._inputBuffer, byteOffset + signalOffset, sampleType, signalNbSamples );
+      var rawSignal = CodecUtils.extractTypedArray( this._inputBuffer, byteOffset + signalOffset, sampleType, signalNbSamples );
       signalOffset += signalNbSamples * sampleType.BYTES_PER_ELEMENT;
-      signals.push( signal );
-    }
-
-    console.log( this._output );
-  }
-
-
-
-  _decodeDataFloat16( byteOffset ){
-    if(! this._inputBuffer ){
-      console.warn("A input buffer must be specified.");
-      return;
-    }
-
-    if(! "header" in this._output ){
-      console.warn("Invalid header");
-      return;
-    }
-
-
-    var bytePerSample = 2;
-    var header = this._output.header;
-    var signals = [];
-    this._output.signals = signals;
-
-    var signalOffset = 0;
-
-    for(var i=0; i<header.nbSignals; i++){
-      var signalNbSamples = header.signalInfo[i].nbOfSamples * header.nbDataRecords;
-
-      var slicedBuff = this._inputBuffer.slice(byteOffset + signalOffset, byteOffset + signalOffset + signalNbSamples * bytePerSample);
-      let view = new DataView( slicedBuff );
-      var signal = [];
-
-      for(var s=0; s<signalNbSamples; s++){
-        signal.push( getFloat16.getFloat16(view, s * bytePerSample, false) );
+      rawSignals.push( rawSignal );
+      
+      // compute the scaled signal
+      var physicalSignal = new Float32Array( rawSignal.length ).fill(0);
+      var digitalSignalRange = header.signalInfo[i].digitalMaximum - header.signalInfo[i].digitalMinimum;
+      var physicalSignalRange = header.signalInfo[i].physicalMaximum - header.signalInfo[i].physicalMinimum;
+      
+      for(var index=0; index<signalNbSamples; index++){
+        physicalSignal[ index ] = (((rawSignal[index] - header.signalInfo[i].digitalMinimum) / digitalSignalRange ) * physicalSignalRange) + header.signalInfo[i].physicalMinimum;
       }
-
-
-      //var signal = CodecUtils.extractTypedArray( this._inputBuffer, byteOffset + signalOffset, sampleType, signalNbSamples );
-      signalOffset += signalNbSamples * bytePerSample;
-      signals.push( signal );
+      
+      physicalSignals.push( physicalSignal );
     }
-
-    console.log( this._output );
   }
 
-
+  
+  /**
+  * Get the output as an object. The output contains the the header (Object),
+  * the raw (digital) signal as a Int16Array and the physical (scaled) signal
+  * as a Float32Array.
+  * @return {Object} the output.
+  */
+  getOutput(){
+    return this._output;
+  }
 
 }
 

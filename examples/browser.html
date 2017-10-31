@@ -39,6 +39,8 @@
     function readEdfFile( buff ){
       decoder.setInput( buff );
       decoder.decode();
+      var output = decoder.getOutput();
+      console.log( output );
     }
 
 

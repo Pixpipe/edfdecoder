@@ -34,7 +34,6 @@
     "serve": "^6.3.1"
   },
   "dependencies": {
-    "@petamoriken/float16": "^1.0.6",
     "codecutils": "github:Pixpipe/codecutils"
   }
 }
