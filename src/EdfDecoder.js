@@ -78,12 +78,16 @@ class EdfDecoder {
     offset += 80;
 
     // 8 ascii : startdate of recording (dd.mm.yy)
-    header.recordingStartDate = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
+    var recordingStartDate = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
     offset += 8;
 
     // 8 ascii : starttime of recording (hh.mm.ss)
-    header.recordingStartTime = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
+    var recordingStartTime = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
     offset += 8;
+
+    var date = recordingStartDate.split(".");
+    var time = recordingStartTime.split(".");
+    header.recordingDate = new Date( date[2], date[1], date[0], time[0], time[1], time[2], 0 );
 
     // 8 ascii : number of bytes in header record
     header.nbBytesHeaderRecord = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
