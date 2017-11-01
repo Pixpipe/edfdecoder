@@ -982,6 +982,20 @@ var CodecUtils = function () {
   return CodecUtils;
 }(); /* END of class CodecUtils */
 
+class Edf {
+  constructor( header, rawSignals, physicalSignals ){
+    this._header = header;
+    this._physicalSignals = physicalSignals;
+    this._rawSignals = rawSignals;
+  }
+
+
+  getRecordDuration(){
+
+  }
+
+} /* END of class Edf */
+
 /*
 * Author    Jonathan Lurie - http://me.jonahanlurie.fr
 * License   MIT
@@ -990,7 +1004,6 @@ var CodecUtils = function () {
 */
 
 
-/** Class representing a EdfDecoder. */
 class EdfDecoder {
 
   /**
@@ -1001,31 +1014,36 @@ class EdfDecoder {
     this._output = null;
   }
 
+
+  /**
+  * Set the buffer (most likey from a file) that contains some EDF data
+  * @param {ArrayBuffer} buff - buffer from a file
+  */
   setInput( buff ){
-    this._output = {};
+    this._output = null;
     this._inputBuffer = buff;
   }
 
+
+  /**
+  * Decode the EDF file buffer set as input. This is done in two steps, first the header and then the data.
+  */
   decode(){
-    var offset = 0;
     try{
-      offset = this._decodeHeader();
+      var headerInfo = this._decodeHeader();
+      this._decodeData( headerInfo.offset, headerInfo.header );
     }catch(e){
       console.warn( e );
-      this._output = null;
     }
 
-    if( offset ){
-      try{
-        this._decodeData( offset );
-      }catch(e){
-        console.warn( e );
-        this._output = null;
-      }
-    }
 
   }
 
+
+  /**
+  * [PRIVATE]
+  * Decodes the header or the file
+  */
   _decodeHeader(){
     if(! this._inputBuffer ){
       console.warn("A input buffer must be specified.");
@@ -1033,8 +1051,6 @@ class EdfDecoder {
     }
 
     var header = {};
-    this._output.header = header;
-
     var offset = 0;
 
     // 8 ascii : version of this data format (0)
@@ -1128,7 +1144,10 @@ class EdfDecoder {
       });
     }
 
-    return offset;
+    return {
+      offset: offset,
+      header: header
+    }
   }
 
 
@@ -1137,48 +1156,60 @@ class EdfDecoder {
   * Decodes the data. Must be called after the header is decoded.
   * @param {Number} byteOffset - byte size of the header
   */
-  _decodeData( byteOffset ){
+  _decodeData( byteOffset, header ){
     if(! this._inputBuffer ){
       console.warn("A input buffer must be specified.");
       return;
     }
 
-    if(! "header" in this._output ){
+    if(! header ){
       console.warn("Invalid header");
       return;
     }
 
     var sampleType = Int16Array;
-    var header = this._output.header;
-    
+
     // the raw signal is the digital signal
-    var rawSignals = [];
-    this._output.rawSignals = rawSignals;
-    var physicalSignals = [];
-    this._output.physicalSignals = physicalSignals;
-    
-    var signalOffset = 0;
-
-    for(var i=0; i<header.nbSignals; i++){
-      var signalNbSamples = header.signalInfo[i].nbOfSamples * header.nbDataRecords;
-      var rawSignal = CodecUtils.extractTypedArray( this._inputBuffer, byteOffset + signalOffset, sampleType, signalNbSamples );
-      signalOffset += signalNbSamples * sampleType.BYTES_PER_ELEMENT;
-      rawSignals.push( rawSignal );
-      
-      // compute the scaled signal
-      var physicalSignal = new Float32Array( rawSignal.length ).fill(0);
-      var digitalSignalRange = header.signalInfo[i].digitalMaximum - header.signalInfo[i].digitalMinimum;
-      var physicalSignalRange = header.signalInfo[i].physicalMaximum - header.signalInfo[i].physicalMinimum;
-      
-      for(var index=0; index<signalNbSamples; index++){
-        physicalSignal[ index ] = (((rawSignal[index] - header.signalInfo[i].digitalMinimum) / digitalSignalRange ) * physicalSignalRange) + header.signalInfo[i].physicalMinimum;
-      }
-      
-      physicalSignals.push( physicalSignal );
+    var rawSignals = new Array(header.nbSignals);
+    var physicalSignals = new Array(header.nbSignals);
+    // allocation some room for all the records
+    for(var ns=0; ns<header.nbSignals; ns++){
+      rawSignals[ns] = new Array(header.nbDataRecords);
+      physicalSignals[ns] = new Array(header.nbDataRecords);
     }
-  }
 
-  
+    // the signal are faster varying than the records
+    for(var r=0; r<header.nbDataRecords; r++){
+      for(var ns=0; ns<header.nbSignals; ns++){
+        var signalNbSamples = header.signalInfo[ns].nbOfSamples;
+        var rawSignal = CodecUtils.extractTypedArray( this._inputBuffer, byteOffset, sampleType, signalNbSamples );
+        byteOffset += signalNbSamples * sampleType.BYTES_PER_ELEMENT;
+        rawSignals[ns][r] = rawSignal;
+
+
+        // compute the scaled signal
+        var physicalSignal = new Float32Array( rawSignal.length ).fill(0);
+        var digitalSignalRange = header.signalInfo[ns].digitalMaximum - header.signalInfo[ns].digitalMinimum;
+        var physicalSignalRange = header.signalInfo[ns].physicalMaximum - header.signalInfo[ns].physicalMinimum;
+
+
+        for(var index=0; index<signalNbSamples; index++){
+          physicalSignal[ index ] = (((rawSignal[index] - header.signalInfo[ns].digitalMinimum) / digitalSignalRange ) * physicalSignalRange) + header.signalInfo[ns].physicalMinimum;
+        }
+
+        //physicalSignals.push( physicalSignal );
+        physicalSignals[ns][r] = physicalSignal;
+
+      }
+    }
+
+    this._output = new Edf( header, rawSignals, physicalSignals );
+
+
+  } /* END method */
+
+
+
   /**
   * Get the output as an object. The output contains the the header (Object),
   * the raw (digital) signal as a Int16Array and the physical (scaled) signal
@@ -1192,6 +1223,7 @@ class EdfDecoder {
 }
 
 exports.EdfDecoder = EdfDecoder;
+exports.Edf = Edf;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
