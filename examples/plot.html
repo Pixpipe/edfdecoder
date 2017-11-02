@@ -17,7 +17,7 @@
     font-size: 4em;
     color: #4981a2;
     margin-bottom: initial;
-    margin-top: 80px;
+    margin-top: 20px;
   }
   
   h2 {
@@ -47,8 +47,8 @@
   }
   
   #container {
-    margin-left: 10vw;
-    margin-right: 10vw;
+    margin-left: 25vw;
+    margin-right: 25vw;
   }
   
   #description {
@@ -78,7 +78,9 @@
     <div id="description">
       Open EDF file <input type="file" id="fileInput">
       <br>
-      Displays only the first signal and the first record
+      (Here, only the first signal is displayed)
+      <br>
+      Record Index <input id='slider' type="range" value="0"> <span id="recordIndexPrint">0</span>
     </div>
     <div id="chartDiv"></div>
   </div>
@@ -86,6 +88,9 @@
   <script>
 
   var fileInput = document.getElementById('fileInput');
+  var slider = document.getElementById("slider");
+  var recordIndexPrint = document.getElementById("recordIndexPrint");
+  var edf = null;
 
   // the foo object is part of our edfdecoder module
   var decoder = new edfdecoder.EdfDecoder();
@@ -107,25 +112,43 @@
   });
 
 
+  slider.addEventListener('change', function(e) {
+    console.log( slider.value);
+    showPlot( 0, slider.value );
+    recordIndexPrint.innerHTML = slider.value
+  })
+
   function readEdfFile( buff ){
+    edf = null;
     decoder.setInput( buff );
     decoder.decode();
     var output = decoder.getOutput();
     
     if( output ){
-      showPlot( output );
+      edf = output;
+      
+      slider.value = 0;
+      slider.min = 0;
+      slider.max = edf.getNumberOfRecords();
+      
+      showPlot( 0, 0 );
     }
     console.log( output );
   }
 
-  function showPlot( edf ){
-    var signalIndex = 0;
+
+  function showPlot( signalIndex, recordIndex ){
+    if(!edf){
+      alert("Invalid EDF file");
+      return;
+    }
+  
     
     var div = document.getElementById( "chartDiv" );
     div.innerHTML = "";
     
     var sp = new SpectrumPlot2.SpectrumPlot2( "chartDiv", 400, 300 );
-    var signal = edf.getPhysicalSignal(signalIndex, 0);
+    var signal = edf.getPhysicalSignal(signalIndex, recordIndex);
     //var signal = edf.getPhysicalSignalConcatRecords(0, 0, 1);
     var redIndex = sp.addSpectrum( 
       "Signal " + edf.getSignalPhysicalUnit(signalIndex), 
