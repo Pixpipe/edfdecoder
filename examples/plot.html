@@ -1,0 +1,144 @@
+<html>
+<head>
+  <title>Edf Decoder</title>
+  
+  <style>
+  
+  body {
+    margin: 10px;
+    background-color: #ccecff;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  h1 {
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 4em;
+    color: #4981a2;
+    margin-bottom: initial;
+    margin-top: 80px;
+  }
+  
+  h2 {
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 1em;
+    color: #4981a2;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #008fca;
+    transition: all 0.2s;
+  }
+  
+  a:hover {
+    color: #00638c;
+  }
+  
+  code {
+    font-family: "monospace";
+    background-color: #d49595;
+    padding: 0px 5px 0px 5px;
+    border-radius: 5px;
+    color: white;
+  }
+  
+  #container {
+    margin-left: 10vw;
+    margin-right: 10vw;
+  }
+  
+  #description {
+    text-align: center;
+    width: 100%;
+  }
+  
+  #chartDiv {
+    padding: 20px;
+    background-color: #fafafa;
+    margin-top: 50px;
+    border-radius: 15px;
+  }
+  
+  </style>
+  
+  <!-- importing the automatically build module -->
+  <script src="http://me.jonathanlurie.fr/SpectrumPlot2/dist/SpectrumPlot2.js"></script>
+  <script src="../dist/edfdecoder.umd.js"></script>
+</head>
+<body>
+  
+
+  <div id="container">
+    <h1>Edf Decoder</h1>
+    
+    <div id="description">
+      Open EDF file <input type="file" id="fileInput">
+      <br>
+      Displays only the first signal and the first record
+    </div>
+    <div id="chartDiv"></div>
+  </div>
+
+  <script>
+
+  var fileInput = document.getElementById('fileInput');
+
+  // the foo object is part of our edfdecoder module
+  var decoder = new edfdecoder.EdfDecoder();
+  
+  // event listener of the file dialog, it then triggers the file decoding
+  fileInput.addEventListener('change', function(e) {
+    var files = e.target.files;
+    var reader = new FileReader();
+
+    if( !files.length ){
+      return;
+    }
+
+    reader.onloadend = function(event) {
+      var buffer = event.target.result;
+      readEdfFile(buffer);
+    }
+    reader.readAsArrayBuffer( files[0] );
+  });
+
+
+  function readEdfFile( buff ){
+    decoder.setInput( buff );
+    decoder.decode();
+    var output = decoder.getOutput();
+    
+    if( output ){
+      showPlot( output );
+    }
+    console.log( output );
+  }
+
+  function showPlot( edf ){
+    var signalIndex = 0;
+    
+    var div = document.getElementById( "chartDiv" );
+    div.innerHTML = "";
+    
+    var sp = new SpectrumPlot2.SpectrumPlot2( "chartDiv", 400, 300 );
+    var signal = edf.getPhysicalSignal(signalIndex, 0);
+    //var signal = edf.getPhysicalSignalConcatRecords(0, 0, 1);
+    var redIndex = sp.addSpectrum( 
+      "Signal " + edf.getSignalPhysicalUnit(signalIndex), 
+      signal,
+      "rgba(250, 80, 80, 0.8)"
+    )
+    
+    sp.setLabels();
+    
+    sp.draw();
+  }
+
+  </script>
+
+</body>
+</html>
