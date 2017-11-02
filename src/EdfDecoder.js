@@ -197,7 +197,7 @@ class EdfDecoder {
     // the signal are faster varying than the records
     for(var r=0; r<header.nbDataRecords; r++){
       for(var ns=0; ns<header.nbSignals; ns++){
-        var signalNbSamples = header.signalInfo[ns].nbOfSamples /** header.nbDataRecords*/;
+        var signalNbSamples = header.signalInfo[ns].nbOfSamples;
         var rawSignal = CodecUtils.extractTypedArray( this._inputBuffer, byteOffset, sampleType, signalNbSamples );
         byteOffset += signalNbSamples * sampleType.BYTES_PER_ELEMENT;
         rawSignals[ns][r] = rawSignal;

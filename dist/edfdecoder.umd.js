@@ -991,8 +991,13 @@ var CodecUtils = function () {
 
 
 /**
-*
-* When the number of record is greater than one, it means that each signal have more than one record.
+* An instance of Edf is usually given as output of an EdfDecoder. It provides an
+* interface with a lot of helper function to query information that were extracted
+* from en *.edf* file, such as header information, getting a signal at a given record
+* or concatenating records of a given signal.  
+* 
+* Keep in mind that the number of records in an edf file can be decoded by arbitrary
+* measures, or it can be 1 second per records, etc.
 *
 */
 class Edf {
@@ -1079,7 +1084,8 @@ class Edf {
 
   /**
   * Get the digital maximum for a given signal index
-  * @param {Number} index of the signal
+  * @param {Number} index - index of the signal
+  * @return {Number}
   */
   getSignalDigitalMax( index ){
     if( index < 0 || index >= this._header.signalInfo.length ){
@@ -1093,7 +1099,8 @@ class Edf {
 
   /**
   * Get the digital minimum for a given signal index
-  * @param {Number} index of the signal
+  * @param {Number} index - index of the signal
+  * @return {Number}
   */
   getSignalDigitalMin( index ){
     if( index < 0 || index >= this._header.signalInfo.length ){
@@ -1107,7 +1114,8 @@ class Edf {
 
   /**
   * Get the physical minimum for a given signal index
-  * @param {Number} index of the signal
+  * @param {Number} index - index of the signal
+  * @return {Number}
   */
   getSignalPhysicalMin( index ){
     if( index < 0 || index >= this._header.signalInfo.length ){
@@ -1121,7 +1129,8 @@ class Edf {
 
   /**
   * Get the physical maximum for a given signal index
-  * @param {Number} index of the signal
+  * @param {Number} index - index of the signal
+  * @return {Number}
   */
   getSignalPhysicalMax( index ){
     if( index < 0 || index >= this._header.signalInfo.length ){
@@ -1135,7 +1144,7 @@ class Edf {
 
   /**
   * Get the label for a given signal index
-  * @param {Number} index of the signal
+  * @param {Number} index - index of the signal
   * @return {String} 
   */
   getSignalLabel( index ){
@@ -1149,19 +1158,175 @@ class Edf {
 
 
   /**
-  * Get the number of samples for a given signal index
-  * @param {Number} index of the signal
+  * Get the number of samples per record for a given signal index
+  * @param {Number} index - index of the signal
   * @return {Number}
   */
-  getSignalNumberOfSamples( index ){
+  getSignalNumberOfSamplesPerRecord( index ){
     if( index < 0 || index >= this._header.signalInfo.length ){
       console.warn("Signal index is out of range");
       return null;
     }
 
-    return this._header.signalInfo[index].nbOfSamples
-;
+    return this._header.signalInfo[index].nbOfSamples;
   }
+  
+  
+  /**
+  * Get the unit (dimension label) used for a given signal index.
+  * E.g. this can be 'uV' when the signal is an EEG
+  * @param {Number} index - index of the signal
+  * @return {String} the unit name
+  */
+  getSignalPhysicalUnit( index ){
+    if( index < 0 || index >= this._header.signalInfo.length ){
+      console.warn("Signal index is out of range");
+      return null;
+    }
+
+    return this._header.signalInfo[index].physicalDimension;
+  }
+  
+  
+  /**
+  * Get the unit prefiltering info for a given signal index.
+  * @param {Number} index - index of the signal
+  * @return {String} the prefiltering info
+  */
+  getSignalPrefiltering( index ){
+    if( index < 0 || index >= this._header.signalInfo.length ){
+      console.warn("Signal index is out of range");
+      return null;
+    }
+
+    return this._header.signalInfo[index].prefiltering;
+  }
+  
+  
+  /**
+  * Get the transducer type info for a given signal index.
+  * @param {Number} index - index of the signal
+  * @return {String} the transducer type info
+  */
+  getSignalTransducerType( index ){
+    if( index < 0 || index >= this._header.signalInfo.length ){
+      console.warn("Signal index is out of range");
+      return null;
+    }
+
+    return this._header.signalInfo[index].transducerType;
+  }
+  
+  
+  /**
+  * Get the sampling frequency in Hz of a given signal
+  * @param {Number} index - index of the signal
+  * @return {Number} frequency in Hz
+  */
+  getSignalSamplingFrequency( index ){
+    if( index < 0 || index >= this._header.signalInfo.length ){
+      console.warn("Signal index is out of range");
+      return null;
+    }
+    
+    return this._header.signalInfo[index].nbOfSamples / this._header.durationDataRecordsSec;
+  }
+
+  /**
+  * Get the physical (scaled) signal at a given index and record
+  * @param {Number} index - index of the signal
+  * @param {Number} record - index of the record
+  * @return {Float32Array} the physical signal in Float32
+  */
+  getPhysicalSignal( index, record ){
+    if( index < 0 || index >= this._header.signalInfo.length ){
+      console.warn("Signal index is out of range");
+      return null;
+    }
+    
+    if( record<0 && record>=this._physicalSignals[index].length ){
+      console.warn("Record index is out of range");
+      return null;
+    }
+    
+    return this._physicalSignals[index][record];
+  }
+  
+  
+  /**
+  * Get the raw (digital) signal at a given index and record
+  * @param {Number} index - index of the signal
+  * @param {Number} record - index of the record
+  * @return {Int16Array} the physical signal in Int16
+  */
+  getRawSignal( index, record ){
+    if( index < 0 || index >= this._header.signalInfo.length ){
+      console.warn("Signal index is out of range");
+      return null;
+    }
+    
+    if( record<0 && record>=this._rawSignals[index].length ){
+      console.warn("Record index is out of range");
+      return null;
+    }
+    
+    return this._rawSignals[index][record];
+  }
+
+
+
+  /**
+  * Get concatenated contiguous records of a given signal, the index of the
+  * first record and the number of records to concat.
+  * Notice: this allocates a new buffer of an extented size.
+  * @param {Number} index - index of the signal
+  * @param {Number} recordStart - index of the record to start with
+  * @param {Number} howMany - Number of records to concatenate
+  * @return {Float32Array} the physical signal in Float32
+  */
+  getPhysicalSignalConcatRecords(index, recordStart=-1, howMany=-1){
+    if( index < 0 || index >= this._header.signalInfo.length ){
+      console.warn("Signal index is out of range");
+      return null;
+    }
+    
+    if( recordStart<0 && recordStart>=this._physicalSignals[index].length ){
+      console.warn("The index recordStart is out of range");
+      return null;
+    }
+    
+    if(recordStart === -1){
+      recordStart = 0;
+    }
+    
+    if(howMany === -1){
+      howMany = this._physicalSignals[index].length;
+    }
+    
+    // index of the last one to consider
+    var recordEnd = recordStart + howMany - 1;
+    
+    if( recordEnd<0 && recordEnd>=this._physicalSignals[index].length ){
+      console.warn("Too many records to concatenate, this goes out of range.");
+      return null;
+    }
+    
+    var totalSize = 0;
+    for(var i=recordStart; i<recordStart + howMany; i++){
+      totalSize += this._physicalSignals[index][i].length;
+    }
+    
+    var concatSignal = new Float32Array( totalSize );
+    var offset = 0;
+    
+    for(var i=recordStart; i<recordStart + howMany; i++){
+      concatSignal.set( this._physicalSignals[index][i], offset );
+      offset += this._physicalSignals[index][i].length;
+    }
+    
+    return concatSignal;
+  }
+
 
 } /* END of class Edf */
 
@@ -1173,6 +1338,12 @@ class Edf {
 */
 
 
+/**
+* An instance of EdfDecoder is used to decode an EDF file, or rather a buffer extracted from a
+* EDF file. To specify the input, use the method `.setInput(buf)` , then launch the decoding
+* with the method `.decode()` and finally get the content as an object with `.getOutput()`.
+* If the output is `null`, then the parser was not able to decode the file.
+*/
 class EdfDecoder {
 
   /**

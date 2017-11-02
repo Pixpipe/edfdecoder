@@ -1,0 +1,1281 @@
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title> </title>
+  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
+  <link href='assets/style.css' type='text/css' rel='stylesheet' />
+  <link href='assets/railscasts.css' type='text/css' rel='stylesheet' />
+</head>
+<body class='documentation'>
+  <div class='px2'>
+    <div class='clearfix md-flex lg-flex flex-stretch mxn2'>
+      <div class='documentation-sidebar relative top-0 bottom-0 right-0 px2 py2 col-3 md-show'>
+        <div class='font-smaller fixed col-3 top-0 bottom-0 left-0 overflow-auto black fill-light dark-link'>
+          <a href='/' class='h5 button block button-transparent'> </a>
+          <div class='px2'>
+              <h1><a
+                href='#EdfDecoder'
+                class='regular mt1 quiet rounded block'>
+                EdfDecoder
+              </a></h1>
+                <a
+                  href='#EdfDecoder._decodeData'
+                  class='px1 quiet rounded regular block'>
+                  <code>_decodeData</code>
+                </a>
+                <a
+                  href='#EdfDecoder._decodeHeader'
+                  class='px1 quiet rounded regular block'>
+                  <code>_decodeHeader</code>
+                </a>
+                <a
+                  href='#EdfDecoder.constructor'
+                  class='px1 quiet rounded regular block'>
+                  <code>constructor</code>
+                </a>
+                <a
+                  href='#EdfDecoder.decode'
+                  class='px1 quiet rounded regular block'>
+                  <code>decode</code>
+                </a>
+                <a
+                  href='#EdfDecoder.getOutput'
+                  class='px1 quiet rounded regular block'>
+                  <code>getOutput</code>
+                </a>
+                <a
+                  href='#EdfDecoder.setInput'
+                  class='px1 quiet rounded regular block'>
+                  <code>setInput</code>
+                </a>
+              <h1><a
+                href='#Edf'
+                class='regular mt1 quiet rounded block'>
+                Edf
+              </a></h1>
+                <a
+                  href='#Edf.getNumberOfRecords'
+                  class='px1 quiet rounded regular block'>
+                  <code>getNumberOfRecords</code>
+                </a>
+                <a
+                  href='#Edf.getNumberOfSignals'
+                  class='px1 quiet rounded regular block'>
+                  <code>getNumberOfSignals</code>
+                </a>
+                <a
+                  href='#Edf.getPatientID'
+                  class='px1 quiet rounded regular block'>
+                  <code>getPatientID</code>
+                </a>
+                <a
+                  href='#Edf.getPhysicalSignal'
+                  class='px1 quiet rounded regular block'>
+                  <code>getPhysicalSignal</code>
+                </a>
+                <a
+                  href='#Edf.getPhysicalSignalConcatRecords'
+                  class='px1 quiet rounded regular block'>
+                  <code>getPhysicalSignalConcatRecords</code>
+                </a>
+                <a
+                  href='#Edf.getRawSignal'
+                  class='px1 quiet rounded regular block'>
+                  <code>getRawSignal</code>
+                </a>
+                <a
+                  href='#Edf.getRecordDuration'
+                  class='px1 quiet rounded regular block'>
+                  <code>getRecordDuration</code>
+                </a>
+                <a
+                  href='#Edf.getRecordingID'
+                  class='px1 quiet rounded regular block'>
+                  <code>getRecordingID</code>
+                </a>
+                <a
+                  href='#Edf.getRecordingStartDate'
+                  class='px1 quiet rounded regular block'>
+                  <code>getRecordingStartDate</code>
+                </a>
+                <a
+                  href='#Edf.getReservedField'
+                  class='px1 quiet rounded regular block'>
+                  <code>getReservedField</code>
+                </a>
+                <a
+                  href='#Edf.getSignalDigitalMax'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalDigitalMax</code>
+                </a>
+                <a
+                  href='#Edf.getSignalDigitalMin'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalDigitalMin</code>
+                </a>
+                <a
+                  href='#Edf.getSignalLabel'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalLabel</code>
+                </a>
+                <a
+                  href='#Edf.getSignalNumberOfSamplesPerRecord'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalNumberOfSamplesPerRecord</code>
+                </a>
+                <a
+                  href='#Edf.getSignalPhysicalMax'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalPhysicalMax</code>
+                </a>
+                <a
+                  href='#Edf.getSignalPhysicalMin'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalPhysicalMin</code>
+                </a>
+                <a
+                  href='#Edf.getSignalPhysicalUnit'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalPhysicalUnit</code>
+                </a>
+                <a
+                  href='#Edf.getSignalPrefiltering'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalPrefiltering</code>
+                </a>
+                <a
+                  href='#Edf.getSignalSamplingFrequency'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalSamplingFrequency</code>
+                </a>
+                <a
+                  href='#Edf.getSignalTransducerType'
+                  class='px1 quiet rounded regular block'>
+                  <code>getSignalTransducerType</code>
+                </a>
+          </div>
+        </div>
+      </div>
+      <div class='sm-col-12 md-col-9  lg-col-9  flex flex-column'>
+        <div class=''>
+          <div class='px1'>
+            <section id='EdfDecoder'class='mt4 mb4 px2'>
+  <h3 class='regular'>
+    <a class='black' href='#EdfDecoder'>
+      <code>
+        EdfDecoder<span class='gray'></span>
+      </code>
+    </a>
+  </h3>
+  <p>An instance of EdfDecoder is used to decode an EDF file, or rather a buffer extracted from a
+EDF file. To specify the input, use the method <code>.setInput(buf)</code> , then launch the decoding
+with the method <code>.decode()</code> and finally get the content as an object with <code>.getOutput()</code>.
+If the output is <code>null</code>, then the parser was not able to decode the file.</p>
+
+
+
+
+
+
+
+
+      <div class='section-indent'>
+       <section id='EdfDecoder._decodeData'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#EdfDecoder._decodeData'>
+             <code>
+               _decodeData<span class='gray'>(byteOffset, header)</span>
+             </code>
+           </a>
+         </h3>
+         <p>[PRIVATE]
+       Decodes the data. Must be called after the header is decoded.</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>byteOffset</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>byte size of the header</p>
+       </td>
+                 </tr>
+                 <tr>
+                   <td class='col-3 strong'>header</td>
+                   <td class='col-3 quiet'>
+                     
+                   </td>
+                   <td class='col-6'></td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='EdfDecoder._decodeHeader'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#EdfDecoder._decodeHeader'>
+             <code>
+               _decodeHeader<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>[PRIVATE]
+       Decodes the header or the file</p>
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='EdfDecoder.constructor'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#EdfDecoder.constructor'>
+             <code>
+               constructor<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>Create a EdfDecoder.</p>
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='EdfDecoder.decode'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#EdfDecoder.decode'>
+             <code>
+               decode<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>Decode the EDF file buffer set as input. This is done in two steps, first the header and then the data.</p>
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='EdfDecoder.getOutput'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#EdfDecoder.getOutput'>
+             <code>
+               getOutput<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the output as an object. The output contains the the header (Object),
+       the raw (digital) signal as a Int16Array and the physical (scaled) signal
+       as a Float32Array.</p>
+       
+       
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the output.</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='EdfDecoder.setInput'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#EdfDecoder.setInput'>
+             <code>
+               setInput<span class='gray'>(buff)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Set the buffer (most likey from a file) that contains some EDF data</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>buff</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer">ArrayBuffer</a></code>
+                   </td>
+                   <td class='col-6'><p>buffer from a file</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+
+
+</section>
+<section id='Edf'class='mt4 mb4 px2'>
+  <h3 class='regular'>
+    <a class='black' href='#Edf'>
+      <code>
+        Edf<span class='gray'>(header, rawSignals, physicalSignals)</span>
+      </code>
+    </a>
+  </h3>
+  <p>An instance of Edf is usually given as output of an EdfDecoder. It provides an
+interface with a lot of helper function to query information that were extracted
+from en <em>.edf</em> file, such as header information, getting a signal at a given record
+or concatenating records of a given signal.</p>
+<p>Keep in mind that the number of records in an edf file can be decoded by arbitrary
+measures, or it can be 1 second per records, etc.</p>
+
+
+    <p>
+      <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+        <thead class='fill-light'>
+          <th class='col-3 small caps quiet'>parameter</th>
+          <th class='col-3 small caps quiet'>type</th>
+          <th class='col-6 small caps quiet'>description</th>
+        </thead>
+          <tr>
+            <td class='col-3 strong'>header</td>
+            <td class='col-3 quiet'>
+              
+            </td>
+            <td class='col-6'></td>
+          </tr>
+          <tr>
+            <td class='col-3 strong'>rawSignals</td>
+            <td class='col-3 quiet'>
+              
+            </td>
+            <td class='col-6'></td>
+          </tr>
+          <tr>
+            <td class='col-3 strong'>physicalSignals</td>
+            <td class='col-3 quiet'>
+              
+            </td>
+            <td class='col-6'></td>
+          </tr>
+      </table>
+    </p>
+
+
+
+
+
+
+      <div class='section-indent'>
+       <section id='Edf.getNumberOfRecords'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getNumberOfRecords'>
+             <code>
+               getNumberOfRecords<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>get the number of records per signal.
+       Note: most of the time, records from the same signal are contiguous in time.</p>
+       
+       
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the number of records</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getNumberOfSignals'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getNumberOfSignals'>
+             <code>
+               getNumberOfSignals<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>get the number of signals.
+       Note: a signal can have more than one record</p>
+       
+       
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the number of signals</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getPatientID'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getPatientID'>
+             <code>
+               getPatientID<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the patien ID</p>
+       
+       
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>ID</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getPhysicalSignal'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getPhysicalSignal'>
+             <code>
+               getPhysicalSignal<span class='gray'>(index, record)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the physical (scaled) signal at a given index and record</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+                 <tr>
+                   <td class='col-3 strong'>record</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the record</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the physical signal in Float32</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getPhysicalSignalConcatRecords'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getPhysicalSignalConcatRecords'>
+             <code>
+               getPhysicalSignalConcatRecords<span class='gray'>(index, recordStart, howMany)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get concatenated contiguous records of a given signal, the index of the
+       first record and the number of records to concat.
+       Notice: this allocates a new buffer of an extented size.</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+                 <tr>
+                   <td class='col-3 strong'>recordStart</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the record to start with</p>
+       </td>
+                 </tr>
+                 <tr>
+                   <td class='col-3 strong'>howMany</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>Number of records to concatenate</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the physical signal in Float32</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getRawSignal'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getRawSignal'>
+             <code>
+               getRawSignal<span class='gray'>(index, record)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the raw (digital) signal at a given index and record</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+                 <tr>
+                   <td class='col-3 strong'>record</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the record</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array">Int16Array</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the physical signal in Int16</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getRecordDuration'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getRecordDuration'>
+             <code>
+               getRecordDuration<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the duration in second of a single record</p>
+       
+       
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>duration</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getRecordingID'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getRecordingID'>
+             <code>
+               getRecordingID<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the ID of the recording</p>
+       
+       
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the ID</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getRecordingStartDate'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getRecordingStartDate'>
+             <code>
+               getRecordingStartDate<span class='gray'></span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the date and the time at which the recording has started</p>
+       
+       
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the date</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getReservedField'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getReservedField'>
+             <code>
+               getReservedField<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the value of the reserved field, global (from header) or specific to a signal.
+       Notice: reserved are rarely used.</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>if not specified, get the header&apos;s reserved field. If [0, nbSignals[ get the reserved field specific for the given signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the data of the reserved field.</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalDigitalMax'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalDigitalMax'>
+             <code>
+               getSignalDigitalMax<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the digital maximum for a given signal index</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             
+             <span class='force-inline'>
+               
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalDigitalMin'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalDigitalMin'>
+             <code>
+               getSignalDigitalMin<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the digital minimum for a given signal index</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             
+             <span class='force-inline'>
+               
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalLabel'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalLabel'>
+             <code>
+               getSignalLabel<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the label for a given signal index</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></code>
+             
+             <span class='force-inline'>
+               
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalNumberOfSamplesPerRecord'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalNumberOfSamplesPerRecord'>
+             <code>
+               getSignalNumberOfSamplesPerRecord<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the number of samples per record for a given signal index</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             
+             <span class='force-inline'>
+               
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalPhysicalMax'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalPhysicalMax'>
+             <code>
+               getSignalPhysicalMax<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the physical maximum for a given signal index</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             
+             <span class='force-inline'>
+               
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalPhysicalMin'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalPhysicalMin'>
+             <code>
+               getSignalPhysicalMin<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the physical minimum for a given signal index</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             
+             <span class='force-inline'>
+               
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalPhysicalUnit'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalPhysicalUnit'>
+             <code>
+               getSignalPhysicalUnit<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the unit (dimension label) used for a given signal index.
+       E.g. this can be &apos;uV&apos; when the signal is an EEG</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the unit name</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalPrefiltering'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalPrefiltering'>
+             <code>
+               getSignalPrefiltering<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the unit prefiltering info for a given signal index.</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the prefiltering info</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalSamplingFrequency'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalSamplingFrequency'>
+             <code>
+               getSignalSamplingFrequency<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the sampling frequency in Hz of a given signal</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>frequency in Hz</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+      <div class='section-indent'>
+       <section id='Edf.getSignalTransducerType'class='mt4 mb4 px2'>
+         <h3 class='regular'>
+           <a class='black' href='#Edf.getSignalTransducerType'>
+             <code>
+               getSignalTransducerType<span class='gray'>(index)</span>
+             </code>
+           </a>
+         </h3>
+         <p>Get the transducer type info for a given signal index.</p>
+       
+       
+           <p>
+             <table class='table-light mt3 rounded keyline-all keyline-light overflow-hidden bg-cloudy-light'>
+               <thead class='fill-light'>
+                 <th class='col-3 small caps quiet'>parameter</th>
+                 <th class='col-3 small caps quiet'>type</th>
+                 <th class='col-6 small caps quiet'>description</th>
+               </thead>
+                 <tr>
+                   <td class='col-3 strong'>index</td>
+                   <td class='col-3 quiet'>
+                     <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>
+                   </td>
+                   <td class='col-6'><p>index of the signal</p>
+       </td>
+                 </tr>
+             </table>
+           </p>
+       
+       
+             <h4 class='caps quiet mb1 mt3'>Returns</h4>
+             <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></code>
+             :
+             <span class='force-inline'>
+               <p>the transducer type info</p>
+       
+             </span>
+       
+       
+       
+       
+       
+       
+       </section>
+      </div>
+
+
+</section>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

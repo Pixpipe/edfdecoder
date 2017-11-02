@@ -14,7 +14,7 @@
     "build": "rollup -c",
     "dev": "serve . & rollup -w -c rollup.config.dev.js",
     "build-min": "npm run build && printf \"// Build date: $(date '+%Y-%m%-dT%H:%M:%S')\n\n\" > dist/edfdecoder.umd.min.js && cat header.txt >> dist/edfdecoder.umd.min.js && google-closure-compiler-js dist/edfdecoder.umd.js >> dist/edfdecoder.umd.min.js",
-    "doc": "documentation src/main.js -o ./doc/ -f html",
+    "doc": "documentation src/main.js -o ./doc/ -f html --theme ./doc/themes/documentation-theme-light",
     "all": "npm run build; npm run build-min; npm run doc"
   },
   "author": "Jonathan Lurie",
