@@ -1128,8 +1128,8 @@ var createClass$1 = function () {
 * An instance of Edf is usually given as output of an EdfDecoder. It provides an
 * interface with a lot of helper function to query information that were extracted
 * from en *.edf* file, such as header information, getting a signal at a given record
-* or concatenating records of a given signal.  
-* 
+* or concatenating records of a given signal.
+*
 * Keep in mind that the number of records in an edf file can be decoded by arbitrary
 * measures, or it can be 1 second per records, etc.
 *
@@ -1306,7 +1306,7 @@ var Edf = function () {
     /**
     * Get the label for a given signal index
     * @param {Number} index - index of the signal
-    * @return {String} 
+    * @return {String}
     */
 
   }, {
@@ -1483,7 +1483,13 @@ var Edf = function () {
       }
 
       if (howMany === -1) {
-        howMany = this._physicalSignals[index].length;
+        howMany = this._physicalSignals[index].length - recordStart;
+      } else {
+        // we still want to check if what the user put is not out of bound
+        if (recordStart + howMany > this._physicalSignals[index].length) {
+          console.warn("The number of requested records is too large. Forcing only to available records.");
+          howMany = this._physicalSignals[index].length - recordStart;
+        }
       }
 
       // index of the last one to consider

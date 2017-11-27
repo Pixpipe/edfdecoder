@@ -1,4 +1,4 @@
-/*
+ /*
 * Author    Jonathan Lurie - http://me.jonahanlurie.fr
 * License   MIT
 * Link      https://github.com/jonathanlurie/edfdecoder
@@ -10,8 +10,8 @@
 * An instance of Edf is usually given as output of an EdfDecoder. It provides an
 * interface with a lot of helper function to query information that were extracted
 * from en *.edf* file, such as header information, getting a signal at a given record
-* or concatenating records of a given signal.  
-* 
+* or concatenating records of a given signal.
+*
 * Keep in mind that the number of records in an edf file can be decoded by arbitrary
 * measures, or it can be 1 second per records, etc.
 *
@@ -161,7 +161,7 @@ class Edf {
   /**
   * Get the label for a given signal index
   * @param {Number} index - index of the signal
-  * @return {String} 
+  * @return {String}
   */
   getSignalLabel( index ){
     if( index < 0 || index >= this._header.signalInfo.length ){
@@ -186,8 +186,8 @@ class Edf {
 
     return this._header.signalInfo[index].nbOfSamples;
   }
-  
-  
+
+
   /**
   * Get the unit (dimension label) used for a given signal index.
   * E.g. this can be 'uV' when the signal is an EEG
@@ -202,8 +202,8 @@ class Edf {
 
     return this._header.signalInfo[index].physicalDimension;
   }
-  
-  
+
+
   /**
   * Get the unit prefiltering info for a given signal index.
   * @param {Number} index - index of the signal
@@ -217,8 +217,8 @@ class Edf {
 
     return this._header.signalInfo[index].prefiltering;
   }
-  
-  
+
+
   /**
   * Get the transducer type info for a given signal index.
   * @param {Number} index - index of the signal
@@ -232,8 +232,8 @@ class Edf {
 
     return this._header.signalInfo[index].transducerType;
   }
-  
-  
+
+
   /**
   * Get the sampling frequency in Hz of a given signal
   * @param {Number} index - index of the signal
@@ -244,7 +244,7 @@ class Edf {
       console.warn("Signal index is out of range");
       return null;
     }
-    
+
     return this._header.signalInfo[index].nbOfSamples / this._header.durationDataRecordsSec;
   }
 
@@ -259,16 +259,16 @@ class Edf {
       console.warn("Signal index is out of range");
       return null;
     }
-    
+
     if( record<0 && record>=this._physicalSignals[index].length ){
       console.warn("Record index is out of range");
       return null;
     }
-    
+
     return this._physicalSignals[index][record];
   }
-  
-  
+
+
   /**
   * Get the raw (digital) signal at a given index and record
   * @param {Number} index - index of the signal
@@ -280,12 +280,12 @@ class Edf {
       console.warn("Signal index is out of range");
       return null;
     }
-    
+
     if( record<0 && record>=this._rawSignals[index].length ){
       console.warn("Record index is out of range");
       return null;
     }
-    
+
     return this._rawSignals[index][record];
   }
 
@@ -305,41 +305,48 @@ class Edf {
       console.warn("Signal index is out of range");
       return null;
     }
-    
+
     if( recordStart<0 && recordStart>=this._physicalSignals[index].length ){
       console.warn("The index recordStart is out of range");
       return null;
     }
-    
+
     if(recordStart === -1){
       recordStart = 0;
     }
-    
+
     if(howMany === -1){
       howMany = this._physicalSignals[index].length - recordStart;
+    }else{
+      // we still want to check if what the user put is not out of bound
+      if( recordStart + howMany > this._physicalSignals[index].length ){
+        console.warn("The number of requested records is too large. Forcing only to available records.");
+        howMany = this._physicalSignals[index].length - recordStart; 
+      }
+
     }
-    
+
     // index of the last one to consider
     var recordEnd = recordStart + howMany - 1;
-    
+
     if( recordEnd<0 && recordEnd>=this._physicalSignals[index].length ){
       console.warn("Too many records to concatenate, this goes out of range.");
       return null;
     }
-    
+
     var totalSize = 0;
     for(var i=recordStart; i<recordStart + howMany; i++){
       totalSize += this._physicalSignals[index][i].length;
     }
-    
+
     var concatSignal = new Float32Array( totalSize );
     var offset = 0;
-    
+
     for(var i=recordStart; i<recordStart + howMany; i++){
       concatSignal.set( this._physicalSignals[index][i], offset );
       offset += this._physicalSignals[index][i].length;
     }
-    
+
     return concatSignal;
   }
 
