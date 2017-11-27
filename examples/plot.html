@@ -148,8 +148,8 @@
     div.innerHTML = "";
 
     var sp = new SpectrumPlot2.SpectrumPlot2( "chartDiv", 400, 300 );
-    //var signal = edf.getPhysicalSignal(signalIndex, recordIndex);
-    var signal = edf.getPhysicalSignalConcatRecords(0, 50, 1000);
+    var signal = edf.getPhysicalSignal(signalIndex, recordIndex);
+    //var signal = edf.getPhysicalSignalConcatRecords(0, 50, 1000);
     var redIndex = sp.addSpectrum(
       "Signal " + edf.getSignalPhysicalUnit(signalIndex),
       signal,
