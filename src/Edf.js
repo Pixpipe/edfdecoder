@@ -316,7 +316,7 @@ class Edf {
     }
     
     if(howMany === -1){
-      howMany = this._physicalSignals[index].length;
+      howMany = this._physicalSignals[index].length - recordStart;
     }
     
     // index of the last one to consider

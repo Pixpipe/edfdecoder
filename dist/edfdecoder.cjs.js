@@ -1,8 +1,6 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.edfdecoder = {})));
-}(this, (function (exports) { 'use strict';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -982,13 +980,153 @@ var CodecUtils = function () {
   return CodecUtils;
 }(); /* END of class CodecUtils */
 
+var asyncGenerator$1 = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
+
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
+
+
+
+
+
+var classCallCheck$1 = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass$1 = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
 /*
 * Author    Jonathan Lurie - http://me.jonahanlurie.fr
 * License   MIT
 * Link      https://github.com/jonathanlurie/edfdecoder
 * Lab       MCIN - http://mcin.ca/ - Montreal Neurological Institute
 */
-
 
 /**
 * An instance of Edf is usually given as output of an EdfDecoder. It provides an
@@ -1000,8 +1138,10 @@ var CodecUtils = function () {
 * measures, or it can be 1 second per records, etc.
 *
 */
-class Edf {
-  constructor( header, rawSignals, physicalSignals ){
+var Edf = function () {
+  function Edf(header, rawSignals, physicalSignals) {
+    classCallCheck$1(this, Edf);
+
     this._header = header;
     this._physicalSignals = physicalSignals;
     this._rawSignals = rawSignals;
@@ -1011,324 +1151,371 @@ class Edf {
   * Get the duration in second of a single record
   * @return {Number} duration
   */
-  getRecordDuration(){
-    return this._header.durationDataRecordsSec;
-  }
 
 
-  /**
-  * Get the ID of the recording
-  * @return {String} the ID
-  */
-  getRecordingID(){
-    return this._header.localRecordingId;
-  }
+  createClass$1(Edf, [{
+    key: "getRecordDuration",
+    value: function getRecordDuration() {
+      return this._header.durationDataRecordsSec;
+    }
 
+    /**
+    * Get the ID of the recording
+    * @return {String} the ID
+    */
 
-  /**
-  * get the number of records per signal.
-  * Note: most of the time, records from the same signal are contiguous in time.
-  * @return {Number} the number of records
-  */
-  getNumberOfRecords(){
-    return this._header.nbDataRecords;
-  }
+  }, {
+    key: "getRecordingID",
+    value: function getRecordingID() {
+      return this._header.localRecordingId;
+    }
 
+    /**
+    * get the number of records per signal.
+    * Note: most of the time, records from the same signal are contiguous in time.
+    * @return {Number} the number of records
+    */
 
-  /**
-  * get the number of signals.
-  * Note: a signal can have more than one record
-  * @return {Number} the number of signals
-  */
-  getNumberOfSignals(){
-    return this._header.nbSignals;
-  }
+  }, {
+    key: "getNumberOfRecords",
+    value: function getNumberOfRecords() {
+      return this._header.nbDataRecords;
+    }
 
+    /**
+    * get the number of signals.
+    * Note: a signal can have more than one record
+    * @return {Number} the number of signals
+    */
 
-  /**
-  * Get the patien ID
-  * @return {String} ID
-  */
-  getPatientID(){
-    return this._header.patientId;
-  }
+  }, {
+    key: "getNumberOfSignals",
+    value: function getNumberOfSignals() {
+      return this._header.nbSignals;
+    }
 
+    /**
+    * Get the patien ID
+    * @return {String} ID
+    */
 
-  /**
-  * Get the date and the time at which the recording has started
-  * @return {Date} the date
-  */
-  getRecordingStartDate(){
-    return this._header.recordingDate;
-  }
+  }, {
+    key: "getPatientID",
+    value: function getPatientID() {
+      return this._header.patientId;
+    }
 
+    /**
+    * Get the date and the time at which the recording has started
+    * @return {Date} the date
+    */
 
-  /**
-  * Get the value of the reserved field, global (from header) or specific to a signal.
-  * Notice: reserved are rarely used.
-  * @param {Number} index - if not specified, get the header's reserved field. If [0, nbSignals[ get the reserved field specific for the given signal
-  * @return {String} the data of the reserved field.
-  */
-  getReservedField( index=-1 ){
-    if( index === -1 ){
-      return this._header.reserved;
-    }else{
-      if( index >= 0 && index < this._header.signalInfo.length ){
-        return this._header.signalInfo[index].reserved;
+  }, {
+    key: "getRecordingStartDate",
+    value: function getRecordingStartDate() {
+      return this._header.recordingDate;
+    }
+
+    /**
+    * Get the value of the reserved field, global (from header) or specific to a signal.
+    * Notice: reserved are rarely used.
+    * @param {Number} index - if not specified, get the header's reserved field. If [0, nbSignals[ get the reserved field specific for the given signal
+    * @return {String} the data of the reserved field.
+    */
+
+  }, {
+    key: "getReservedField",
+    value: function getReservedField() {
+      var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
+
+      if (index === -1) {
+        return this._header.reserved;
+      } else {
+        if (index >= 0 && index < this._header.signalInfo.length) {
+          return this._header.signalInfo[index].reserved;
+        }
       }
-    }
 
-    return null;
-  }
-
-
-  /**
-  * Get the digital maximum for a given signal index
-  * @param {Number} index - index of the signal
-  * @return {Number}
-  */
-  getSignalDigitalMax( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
       return null;
     }
 
-    return this._header.signalInfo[index].digitalMaximum;
-  }
+    /**
+    * Get the digital maximum for a given signal index
+    * @param {Number} index - index of the signal
+    * @return {Number}
+    */
 
+  }, {
+    key: "getSignalDigitalMax",
+    value: function getSignalDigitalMax(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
 
-  /**
-  * Get the digital minimum for a given signal index
-  * @param {Number} index - index of the signal
-  * @return {Number}
-  */
-  getSignalDigitalMin( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
+      return this._header.signalInfo[index].digitalMaximum;
     }
 
-    return this._header.signalInfo[index].digitalMinimum;
-  }
+    /**
+    * Get the digital minimum for a given signal index
+    * @param {Number} index - index of the signal
+    * @return {Number}
+    */
 
+  }, {
+    key: "getSignalDigitalMin",
+    value: function getSignalDigitalMin(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
 
-  /**
-  * Get the physical minimum for a given signal index
-  * @param {Number} index - index of the signal
-  * @return {Number}
-  */
-  getSignalPhysicalMin( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
+      return this._header.signalInfo[index].digitalMinimum;
     }
 
-    return this._header.signalInfo[index].physicalMinimum;
-  }
+    /**
+    * Get the physical minimum for a given signal index
+    * @param {Number} index - index of the signal
+    * @return {Number}
+    */
 
+  }, {
+    key: "getSignalPhysicalMin",
+    value: function getSignalPhysicalMin(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
 
-  /**
-  * Get the physical maximum for a given signal index
-  * @param {Number} index - index of the signal
-  * @return {Number}
-  */
-  getSignalPhysicalMax( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
+      return this._header.signalInfo[index].physicalMinimum;
     }
 
-    return this._header.signalInfo[index].physicalMaximum;
-  }
+    /**
+    * Get the physical maximum for a given signal index
+    * @param {Number} index - index of the signal
+    * @return {Number}
+    */
 
+  }, {
+    key: "getSignalPhysicalMax",
+    value: function getSignalPhysicalMax(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
 
-  /**
-  * Get the label for a given signal index
-  * @param {Number} index - index of the signal
-  * @return {String} 
-  */
-  getSignalLabel( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
-    }
-
-    return this._header.signalInfo[index].label;
-  }
-
-
-  /**
-  * Get the number of samples per record for a given signal index
-  * @param {Number} index - index of the signal
-  * @return {Number}
-  */
-  getSignalNumberOfSamplesPerRecord( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
+      return this._header.signalInfo[index].physicalMaximum;
     }
 
-    return this._header.signalInfo[index].nbOfSamples;
-  }
-  
-  
-  /**
-  * Get the unit (dimension label) used for a given signal index.
-  * E.g. this can be 'uV' when the signal is an EEG
-  * @param {Number} index - index of the signal
-  * @return {String} the unit name
-  */
-  getSignalPhysicalUnit( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
+    /**
+    * Get the label for a given signal index
+    * @param {Number} index - index of the signal
+    * @return {String} 
+    */
+
+  }, {
+    key: "getSignalLabel",
+    value: function getSignalLabel(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
+
+      return this._header.signalInfo[index].label;
     }
 
-    return this._header.signalInfo[index].physicalDimension;
-  }
-  
-  
-  /**
-  * Get the unit prefiltering info for a given signal index.
-  * @param {Number} index - index of the signal
-  * @return {String} the prefiltering info
-  */
-  getSignalPrefiltering( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
+    /**
+    * Get the number of samples per record for a given signal index
+    * @param {Number} index - index of the signal
+    * @return {Number}
+    */
+
+  }, {
+    key: "getSignalNumberOfSamplesPerRecord",
+    value: function getSignalNumberOfSamplesPerRecord(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
+
+      return this._header.signalInfo[index].nbOfSamples;
     }
 
-    return this._header.signalInfo[index].prefiltering;
-  }
-  
-  
-  /**
-  * Get the transducer type info for a given signal index.
-  * @param {Number} index - index of the signal
-  * @return {String} the transducer type info
-  */
-  getSignalTransducerType( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
+    /**
+    * Get the unit (dimension label) used for a given signal index.
+    * E.g. this can be 'uV' when the signal is an EEG
+    * @param {Number} index - index of the signal
+    * @return {String} the unit name
+    */
+
+  }, {
+    key: "getSignalPhysicalUnit",
+    value: function getSignalPhysicalUnit(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
+
+      return this._header.signalInfo[index].physicalDimension;
     }
 
-    return this._header.signalInfo[index].transducerType;
-  }
-  
-  
-  /**
-  * Get the sampling frequency in Hz of a given signal
-  * @param {Number} index - index of the signal
-  * @return {Number} frequency in Hz
-  */
-  getSignalSamplingFrequency( index ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
-    }
-    
-    return this._header.signalInfo[index].nbOfSamples / this._header.durationDataRecordsSec;
-  }
+    /**
+    * Get the unit prefiltering info for a given signal index.
+    * @param {Number} index - index of the signal
+    * @return {String} the prefiltering info
+    */
 
-  /**
-  * Get the physical (scaled) signal at a given index and record
-  * @param {Number} index - index of the signal
-  * @param {Number} record - index of the record
-  * @return {Float32Array} the physical signal in Float32
-  */
-  getPhysicalSignal( index, record ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
-    }
-    
-    if( record<0 && record>=this._physicalSignals[index].length ){
-      console.warn("Record index is out of range");
-      return null;
-    }
-    
-    return this._physicalSignals[index][record];
-  }
-  
-  
-  /**
-  * Get the raw (digital) signal at a given index and record
-  * @param {Number} index - index of the signal
-  * @param {Number} record - index of the record
-  * @return {Int16Array} the physical signal in Int16
-  */
-  getRawSignal( index, record ){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
-    }
-    
-    if( record<0 && record>=this._rawSignals[index].length ){
-      console.warn("Record index is out of range");
-      return null;
-    }
-    
-    return this._rawSignals[index][record];
-  }
+  }, {
+    key: "getSignalPrefiltering",
+    value: function getSignalPrefiltering(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
 
+      return this._header.signalInfo[index].prefiltering;
+    }
 
+    /**
+    * Get the transducer type info for a given signal index.
+    * @param {Number} index - index of the signal
+    * @return {String} the transducer type info
+    */
 
-  /**
-  * Get concatenated contiguous records of a given signal, the index of the
-  * first record and the number of records to concat.
-  * Notice: this allocates a new buffer of an extented size.
-  * @param {Number} index - index of the signal
-  * @param {Number} recordStart - index of the record to start with
-  * @param {Number} howMany - Number of records to concatenate
-  * @return {Float32Array} the physical signal in Float32
-  */
-  getPhysicalSignalConcatRecords(index, recordStart=-1, howMany=-1){
-    if( index < 0 || index >= this._header.signalInfo.length ){
-      console.warn("Signal index is out of range");
-      return null;
-    }
-    
-    if( recordStart<0 && recordStart>=this._physicalSignals[index].length ){
-      console.warn("The index recordStart is out of range");
-      return null;
-    }
-    
-    if(recordStart === -1){
-      recordStart = 0;
-    }
-    
-    if(howMany === -1){
-      howMany = this._physicalSignals[index].length - recordStart;
-    }
-    
-    // index of the last one to consider
-    var recordEnd = recordStart + howMany - 1;
-    
-    if( recordEnd<0 && recordEnd>=this._physicalSignals[index].length ){
-      console.warn("Too many records to concatenate, this goes out of range.");
-      return null;
-    }
-    
-    var totalSize = 0;
-    for(var i=recordStart; i<recordStart + howMany; i++){
-      totalSize += this._physicalSignals[index][i].length;
-    }
-    
-    var concatSignal = new Float32Array( totalSize );
-    var offset = 0;
-    
-    for(var i=recordStart; i<recordStart + howMany; i++){
-      concatSignal.set( this._physicalSignals[index][i], offset );
-      offset += this._physicalSignals[index][i].length;
-    }
-    
-    return concatSignal;
-  }
+  }, {
+    key: "getSignalTransducerType",
+    value: function getSignalTransducerType(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
 
+      return this._header.signalInfo[index].transducerType;
+    }
 
-} /* END of class Edf */
+    /**
+    * Get the sampling frequency in Hz of a given signal
+    * @param {Number} index - index of the signal
+    * @return {Number} frequency in Hz
+    */
+
+  }, {
+    key: "getSignalSamplingFrequency",
+    value: function getSignalSamplingFrequency(index) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
+
+      return this._header.signalInfo[index].nbOfSamples / this._header.durationDataRecordsSec;
+    }
+
+    /**
+    * Get the physical (scaled) signal at a given index and record
+    * @param {Number} index - index of the signal
+    * @param {Number} record - index of the record
+    * @return {Float32Array} the physical signal in Float32
+    */
+
+  }, {
+    key: "getPhysicalSignal",
+    value: function getPhysicalSignal(index, record) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
+
+      if (record < 0 && record >= this._physicalSignals[index].length) {
+        console.warn("Record index is out of range");
+        return null;
+      }
+
+      return this._physicalSignals[index][record];
+    }
+
+    /**
+    * Get the raw (digital) signal at a given index and record
+    * @param {Number} index - index of the signal
+    * @param {Number} record - index of the record
+    * @return {Int16Array} the physical signal in Int16
+    */
+
+  }, {
+    key: "getRawSignal",
+    value: function getRawSignal(index, record) {
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
+
+      if (record < 0 && record >= this._rawSignals[index].length) {
+        console.warn("Record index is out of range");
+        return null;
+      }
+
+      return this._rawSignals[index][record];
+    }
+
+    /**
+    * Get concatenated contiguous records of a given signal, the index of the
+    * first record and the number of records to concat.
+    * Notice: this allocates a new buffer of an extented size.
+    * @param {Number} index - index of the signal
+    * @param {Number} recordStart - index of the record to start with
+    * @param {Number} howMany - Number of records to concatenate
+    * @return {Float32Array} the physical signal in Float32
+    */
+
+  }, {
+    key: "getPhysicalSignalConcatRecords",
+    value: function getPhysicalSignalConcatRecords(index) {
+      var recordStart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -1;
+      var howMany = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : -1;
+
+      if (index < 0 || index >= this._header.signalInfo.length) {
+        console.warn("Signal index is out of range");
+        return null;
+      }
+
+      if (recordStart < 0 && recordStart >= this._physicalSignals[index].length) {
+        console.warn("The index recordStart is out of range");
+        return null;
+      }
+
+      if (recordStart === -1) {
+        recordStart = 0;
+      }
+
+      if (howMany === -1) {
+        howMany = this._physicalSignals[index].length;
+      }
+
+      // index of the last one to consider
+      var recordEnd = recordStart + howMany - 1;
+
+      if (recordEnd < 0 && recordEnd >= this._physicalSignals[index].length) {
+        console.warn("Too many records to concatenate, this goes out of range.");
+        return null;
+      }
+
+      var totalSize = 0;
+      for (var i = recordStart; i < recordStart + howMany; i++) {
+        totalSize += this._physicalSignals[index][i].length;
+      }
+
+      var concatSignal = new Float32Array(totalSize);
+      var offset = 0;
+
+      for (var i = recordStart; i < recordStart + howMany; i++) {
+        concatSignal.set(this._physicalSignals[index][i], offset);
+        offset += this._physicalSignals[index][i].length;
+      }
+
+      return concatSignal;
+    }
+  }]);
+  return Edf;
+}(); /* END of class Edf */
 
 /*
 * Author    Jonathan Lurie - http://me.jonahanlurie.fr
@@ -1337,233 +1524,240 @@ class Edf {
 * Lab       MCIN - http://mcin.ca/ - Montreal Neurological Institute
 */
 
+/**
+* An instance of EdfDecoder is used to decode an EDF file, or rather a buffer extracted from a
+* EDF file. To specify the input, use the method `.setInput(buf)` , then launch the decoding
+* with the method `.decode()` and finally get the content as an object with `.getOutput()`.
+* If the output is `null`, then the parser was not able to decode the file.
+*/
 
-class EdfDecoder {
+var EdfDecoder = function () {
 
   /**
    * Create a EdfDecoder.
    */
-  constructor( ) {
+  function EdfDecoder() {
+    classCallCheck$1(this, EdfDecoder);
+
     this._inputBuffer = null;
     this._output = null;
   }
-
 
   /**
   * Set the buffer (most likey from a file) that contains some EDF data
   * @param {ArrayBuffer} buff - buffer from a file
   */
-  setInput( buff ){
-    this._output = null;
-    this._inputBuffer = buff;
-  }
 
 
-  /**
-  * Decode the EDF file buffer set as input. This is done in two steps, first the header and then the data.
-  */
-  decode(){
-    try{
-      var headerInfo = this._decodeHeader();
-      this._decodeData( headerInfo.offset, headerInfo.header );
-    }catch(e){
-      console.warn( e );
+  createClass$1(EdfDecoder, [{
+    key: 'setInput',
+    value: function setInput(buff) {
+      this._output = null;
+      this._inputBuffer = buff;
     }
 
+    /**
+    * Decode the EDF file buffer set as input. This is done in two steps, first the header and then the data.
+    */
 
-  }
-
-
-  /**
-  * [PRIVATE]
-  * Decodes the header or the file
-  */
-  _decodeHeader(){
-    if(! this._inputBuffer ){
-      console.warn("A input buffer must be specified.");
-      return;
-    }
-
-    var header = {};
-    var offset = 0;
-
-    // 8 ascii : version of this data format (0)
-    header.dataFormat = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
-    offset += 8;
-
-    // 80 ascii : local patient identification
-    header.patientId = CodecUtils.getString8FromBuffer( this._inputBuffer , 80, offset).trim();
-    offset += 80;
-
-    // 80 ascii : local recording identification
-    header.localRecordingId = CodecUtils.getString8FromBuffer( this._inputBuffer , 80, offset).trim();
-    offset += 80;
-
-    // 8 ascii : startdate of recording (dd.mm.yy)
-    var recordingStartDate = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
-    offset += 8;
-
-    // 8 ascii : starttime of recording (hh.mm.ss)
-    var recordingStartTime = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
-    offset += 8;
-
-    var date = recordingStartDate.split(".");
-    var time = recordingStartTime.split(".");
-    header.recordingDate = new Date( date[2], date[1], date[0], time[0], time[1], time[2], 0 );
-
-    // 8 ascii : number of bytes in header record
-    header.nbBytesHeaderRecord = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
-    offset += 8;
-
-    // 44 ascii : reserved
-    header.reserved = CodecUtils.getString8FromBuffer( this._inputBuffer , 44, offset);
-    offset += 44;
-
-    // 8 ascii : number of data records (-1 if unknown)
-    header.nbDataRecords = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
-    offset += 8;
-
-    // 8 ascii : duration of a data record, in seconds
-    header.durationDataRecordsSec = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
-    offset += 8;
-
-    // 4 ascii : number of signals (ns) in data record
-    header.nbSignals = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 4, offset).trim() );
-    offset += 4;
-
-    // the following fields occurs ns time in a row each
-    var that = this;
-    function getAllSections( sizeOfEachThing ){
-      var allThings = [];
-      for(var i=0; i<header.nbSignals; i++){
-        allThings.push( CodecUtils.getString8FromBuffer( that._inputBuffer , sizeOfEachThing, offset ).trim() );
-        offset += sizeOfEachThing;
+  }, {
+    key: 'decode',
+    value: function decode() {
+      try {
+        var headerInfo = this._decodeHeader();
+        this._decodeData(headerInfo.offset, headerInfo.header);
+      } catch (e) {
+        console.warn(e);
       }
-      return allThings;
     }
 
-    var signalInfoArrays = {
-      // ns * 16 ascii : ns * label (e.g. EEG Fpz-Cz or Body temp)
-      label: getAllSections( 16 ),
-      // ns * 80 ascii : ns * transducer type (e.g. AgAgCl electrode)
-      transducerType: getAllSections( 80 ),
-      // ns * 8 ascii : ns * physical dimension (e.g. uV or degreeC)
-      physicalDimension: getAllSections( 8 ),
-      // ns * 8 ascii : ns * physical minimum (e.g. -500 or 34)
-      physicalMinimum: getAllSections( 8 ),
-      // ns * 8 ascii : ns * physical maximum (e.g. 500 or 40)
-      physicalMaximum: getAllSections( 8 ),
-      // ns * 8 ascii : ns * digital minimum (e.g. -2048)
-      digitalMinimum: getAllSections( 8 ),
-      // ns * 8 ascii : ns * digital maximum (e.g. 2047)
-      digitalMaximum: getAllSections( 8 ),
-      // ns * 80 ascii : ns * prefiltering (e.g. HP:0.1Hz LP:75Hz)
-      prefiltering: getAllSections( 80 ),
-      // ns * 8 ascii : ns * nr of samples in each data record
-      nbOfSamples: getAllSections( 8 ),
-      // ns * 32 ascii : ns * reserved
-      reserved: getAllSections( 32 )
-    };
+    /**
+    * [PRIVATE]
+    * Decodes the header or the file
+    */
 
-    var signalInfo = [];
-    header.signalInfo = signalInfo;
-    for(var i=0; i<header.nbSignals; i++){
-      signalInfo.push({
-        label: signalInfoArrays.label[i],
-        transducerType: signalInfoArrays.transducerType[i],
-        physicalDimension: signalInfoArrays.physicalDimension[i],
-        physicalMinimum: parseFloat( signalInfoArrays.physicalMinimum[i] ),
-        physicalMaximum: parseFloat( signalInfoArrays.physicalMaximum[i] ),
-        digitalMinimum: parseInt( signalInfoArrays.digitalMinimum[i] ),
-        digitalMaximum: parseInt( signalInfoArrays.digitalMaximum[i] ),
-        prefiltering: signalInfoArrays.prefiltering[i],
-        nbOfSamples: parseInt( signalInfoArrays.nbOfSamples[i] ),
-        reserved: signalInfoArrays.reserved[i],
-      });
-    }
+  }, {
+    key: '_decodeHeader',
+    value: function _decodeHeader() {
+      if (!this._inputBuffer) {
+        console.warn("A input buffer must be specified.");
+        return;
+      }
 
-    return {
-      offset: offset,
-      header: header
-    }
-  }
+      var header = {};
+      var offset = 0;
 
+      // 8 ascii : version of this data format (0)
+      header.dataFormat = CodecUtils.getString8FromBuffer(this._inputBuffer, 8, offset).trim();
+      offset += 8;
 
-  /**
-  * [PRIVATE]
-  * Decodes the data. Must be called after the header is decoded.
-  * @param {Number} byteOffset - byte size of the header
-  */
-  _decodeData( byteOffset, header ){
-    if(! this._inputBuffer ){
-      console.warn("A input buffer must be specified.");
-      return;
-    }
+      // 80 ascii : local patient identification
+      header.patientId = CodecUtils.getString8FromBuffer(this._inputBuffer, 80, offset).trim();
+      offset += 80;
 
-    if(! header ){
-      console.warn("Invalid header");
-      return;
-    }
+      // 80 ascii : local recording identification
+      header.localRecordingId = CodecUtils.getString8FromBuffer(this._inputBuffer, 80, offset).trim();
+      offset += 80;
 
-    var sampleType = Int16Array;
+      // 8 ascii : startdate of recording (dd.mm.yy)
+      var recordingStartDate = CodecUtils.getString8FromBuffer(this._inputBuffer, 8, offset).trim();
+      offset += 8;
 
-    // the raw signal is the digital signal
-    var rawSignals = new Array(header.nbSignals);
-    var physicalSignals = new Array(header.nbSignals);
-    // allocation some room for all the records
-    for(var ns=0; ns<header.nbSignals; ns++){
-      rawSignals[ns] = new Array(header.nbDataRecords);
-      physicalSignals[ns] = new Array(header.nbDataRecords);
-    }
+      // 8 ascii : starttime of recording (hh.mm.ss)
+      var recordingStartTime = CodecUtils.getString8FromBuffer(this._inputBuffer, 8, offset).trim();
+      offset += 8;
 
-    // the signal are faster varying than the records
-    for(var r=0; r<header.nbDataRecords; r++){
-      for(var ns=0; ns<header.nbSignals; ns++){
-        var signalNbSamples = header.signalInfo[ns].nbOfSamples;
-        var rawSignal = CodecUtils.extractTypedArray( this._inputBuffer, byteOffset, sampleType, signalNbSamples );
-        byteOffset += signalNbSamples * sampleType.BYTES_PER_ELEMENT;
-        rawSignals[ns][r] = rawSignal;
+      var date = recordingStartDate.split(".");
+      var time = recordingStartTime.split(".");
+      header.recordingDate = new Date(date[2], date[1], date[0], time[0], time[1], time[2], 0);
 
+      // 8 ascii : number of bytes in header record
+      header.nbBytesHeaderRecord = parseInt(CodecUtils.getString8FromBuffer(this._inputBuffer, 8, offset).trim());
+      offset += 8;
 
-        // compute the scaled signal
-        var physicalSignal = new Float32Array( rawSignal.length ).fill(0);
-        var digitalSignalRange = header.signalInfo[ns].digitalMaximum - header.signalInfo[ns].digitalMinimum;
-        var physicalSignalRange = header.signalInfo[ns].physicalMaximum - header.signalInfo[ns].physicalMinimum;
+      // 44 ascii : reserved
+      header.reserved = CodecUtils.getString8FromBuffer(this._inputBuffer, 44, offset);
+      offset += 44;
 
+      // 8 ascii : number of data records (-1 if unknown)
+      header.nbDataRecords = parseInt(CodecUtils.getString8FromBuffer(this._inputBuffer, 8, offset).trim());
+      offset += 8;
 
-        for(var index=0; index<signalNbSamples; index++){
-          physicalSignal[ index ] = (((rawSignal[index] - header.signalInfo[ns].digitalMinimum) / digitalSignalRange ) * physicalSignalRange) + header.signalInfo[ns].physicalMinimum;
+      // 8 ascii : duration of a data record, in seconds
+      header.durationDataRecordsSec = parseInt(CodecUtils.getString8FromBuffer(this._inputBuffer, 8, offset).trim());
+      offset += 8;
+
+      // 4 ascii : number of signals (ns) in data record
+      header.nbSignals = parseInt(CodecUtils.getString8FromBuffer(this._inputBuffer, 4, offset).trim());
+      offset += 4;
+
+      // the following fields occurs ns time in a row each
+      var that = this;
+      function getAllSections(sizeOfEachThing) {
+        var allThings = [];
+        for (var i = 0; i < header.nbSignals; i++) {
+          allThings.push(CodecUtils.getString8FromBuffer(that._inputBuffer, sizeOfEachThing, offset).trim());
+          offset += sizeOfEachThing;
         }
-
-        //physicalSignals.push( physicalSignal );
-        physicalSignals[ns][r] = physicalSignal;
-
+        return allThings;
       }
+
+      var signalInfoArrays = {
+        // ns * 16 ascii : ns * label (e.g. EEG Fpz-Cz or Body temp)
+        label: getAllSections(16),
+        // ns * 80 ascii : ns * transducer type (e.g. AgAgCl electrode)
+        transducerType: getAllSections(80),
+        // ns * 8 ascii : ns * physical dimension (e.g. uV or degreeC)
+        physicalDimension: getAllSections(8),
+        // ns * 8 ascii : ns * physical minimum (e.g. -500 or 34)
+        physicalMinimum: getAllSections(8),
+        // ns * 8 ascii : ns * physical maximum (e.g. 500 or 40)
+        physicalMaximum: getAllSections(8),
+        // ns * 8 ascii : ns * digital minimum (e.g. -2048)
+        digitalMinimum: getAllSections(8),
+        // ns * 8 ascii : ns * digital maximum (e.g. 2047)
+        digitalMaximum: getAllSections(8),
+        // ns * 80 ascii : ns * prefiltering (e.g. HP:0.1Hz LP:75Hz)
+        prefiltering: getAllSections(80),
+        // ns * 8 ascii : ns * nr of samples in each data record
+        nbOfSamples: getAllSections(8),
+        // ns * 32 ascii : ns * reserved
+        reserved: getAllSections(32)
+      };
+
+      var signalInfo = [];
+      header.signalInfo = signalInfo;
+      for (var i = 0; i < header.nbSignals; i++) {
+        signalInfo.push({
+          label: signalInfoArrays.label[i],
+          transducerType: signalInfoArrays.transducerType[i],
+          physicalDimension: signalInfoArrays.physicalDimension[i],
+          physicalMinimum: parseFloat(signalInfoArrays.physicalMinimum[i]),
+          physicalMaximum: parseFloat(signalInfoArrays.physicalMaximum[i]),
+          digitalMinimum: parseInt(signalInfoArrays.digitalMinimum[i]),
+          digitalMaximum: parseInt(signalInfoArrays.digitalMaximum[i]),
+          prefiltering: signalInfoArrays.prefiltering[i],
+          nbOfSamples: parseInt(signalInfoArrays.nbOfSamples[i]),
+          reserved: signalInfoArrays.reserved[i]
+        });
+      }
+
+      return {
+        offset: offset,
+        header: header
+      };
     }
 
-    this._output = new Edf( header, rawSignals, physicalSignals );
+    /**
+    * [PRIVATE]
+    * Decodes the data. Must be called after the header is decoded.
+    * @param {Number} byteOffset - byte size of the header
+    */
 
+  }, {
+    key: '_decodeData',
+    value: function _decodeData(byteOffset, header) {
+      if (!this._inputBuffer) {
+        console.warn("A input buffer must be specified.");
+        return;
+      }
 
-  } /* END method */
+      if (!header) {
+        console.warn("Invalid header");
+        return;
+      }
 
+      var sampleType = Int16Array;
 
+      // the raw signal is the digital signal
+      var rawSignals = new Array(header.nbSignals);
+      var physicalSignals = new Array(header.nbSignals);
+      // allocation some room for all the records
+      for (var ns = 0; ns < header.nbSignals; ns++) {
+        rawSignals[ns] = new Array(header.nbDataRecords);
+        physicalSignals[ns] = new Array(header.nbDataRecords);
+      }
 
-  /**
-  * Get the output as an object. The output contains the the header (Object),
-  * the raw (digital) signal as a Int16Array and the physical (scaled) signal
-  * as a Float32Array.
-  * @return {Object} the output.
-  */
-  getOutput(){
-    return this._output;
-  }
+      // the signal are faster varying than the records
+      for (var r = 0; r < header.nbDataRecords; r++) {
+        for (var ns = 0; ns < header.nbSignals; ns++) {
+          var signalNbSamples = header.signalInfo[ns].nbOfSamples;
+          var rawSignal = CodecUtils.extractTypedArray(this._inputBuffer, byteOffset, sampleType, signalNbSamples);
+          byteOffset += signalNbSamples * sampleType.BYTES_PER_ELEMENT;
+          rawSignals[ns][r] = rawSignal;
 
-}
+          // compute the scaled signal
+          var physicalSignal = new Float32Array(rawSignal.length).fill(0);
+          var digitalSignalRange = header.signalInfo[ns].digitalMaximum - header.signalInfo[ns].digitalMinimum;
+          var physicalSignalRange = header.signalInfo[ns].physicalMaximum - header.signalInfo[ns].physicalMinimum;
+
+          for (var index = 0; index < signalNbSamples; index++) {
+            physicalSignal[index] = (rawSignal[index] - header.signalInfo[ns].digitalMinimum) / digitalSignalRange * physicalSignalRange + header.signalInfo[ns].physicalMinimum;
+          }
+
+          //physicalSignals.push( physicalSignal );
+          physicalSignals[ns][r] = physicalSignal;
+        }
+      }
+
+      this._output = new Edf(header, rawSignals, physicalSignals);
+    } /* END method */
+
+    /**
+    * Get the output as an object. The output contains the the header (Object),
+    * the raw (digital) signal as a Int16Array and the physical (scaled) signal
+    * as a Float32Array.
+    * @return {Object} the output.
+    */
+
+  }, {
+    key: 'getOutput',
+    value: function getOutput() {
+      return this._output;
+    }
+  }]);
+  return EdfDecoder;
+}();
 
 exports.EdfDecoder = EdfDecoder;
 exports.Edf = Edf;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
-//# sourceMappingURL=edfdecoder.umd.js.map
