@@ -1,6 +1,6 @@
 {
   "name": "edfdecoder",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Decode EDF (European Data Format) files in pure Javascript for Node and browser",
   "repository": "Pixpipe/edfdecoder",
   "entry": "src/main.js",
