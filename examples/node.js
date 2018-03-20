@@ -1,7 +1,7 @@
 const fs = require('fs');
-const edfdecoder = require("../dist/edfdecoder.cjs.js");
+const edfdecoder = require("..");
 
-var buffer = fs.readFileSync("../data/GD028Ra1_FIX.edf").buffer;
+var buffer = fs.readFileSync("../data/GD002R29h13.edf").buffer;
 
 console.log( buffer );
 

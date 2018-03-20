@@ -1,14 +1,12 @@
 {
   "name": "edfdecoder",
   "version": "0.1.0",
-  "description": "A starting point to create ES6 module for browser",
-  "repository": "jonathanlurie/edfdecoder",
-  "moduleName": "edfdecoder",
+  "description": "Decode EDF (European Data Format) files in pure Javascript for Node and browser",
+  "repository": "Pixpipe/edfdecoder",
   "entry": "src/main.js",
-  "main": "dist/edfdecoder.cjs.es5.js",
-  "commonjs": "dist/edfdecoder.cjs.js",
-  "module": "dist/edfdecoder.module.js",
-  "browser": "dist/edfdecoder.umd.js",
+  "main": "dist/edfdecoder.umd.js",
+  "cjs": "dist/edfdecoder.cjs.js",
+  "umd": "dist/edfdecoder.umd.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c",
@@ -24,16 +22,16 @@
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-es2015-rollup": "^3.0.0",
     "documentation": "^3.0.4",
-    "google-closure-compiler-js": "^20170218.0.0",
-    "rollup": "^0.50.0",
-    "rollup-plugin-babel": "^3.0.2",
-    "rollup-plugin-commonjs": "^8.0.2",
+    "google-closure-compiler-js": "^20180204.0.0",
+    "rollup": "^0.57.1",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-globals": "^1.1.0",
-    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-node-globals": "^1.2.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
     "serve": "^6.3.1"
   },
   "dependencies": {
-    "codecutils": "github:Pixpipe/codecutils"
+    "codecutils": "^0.1.1"
   }
 }

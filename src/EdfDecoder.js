@@ -6,7 +6,7 @@
 */
 
 
-import { CodecUtils } from 'codecutils';
+import codecutils from 'codecutils';
 import { Edf } from './Edf.js';
 
 
@@ -66,23 +66,23 @@ class EdfDecoder {
     var offset = 0;
 
     // 8 ascii : version of this data format (0)
-    header.dataFormat = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
+    header.dataFormat = codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
     offset += 8;
 
     // 80 ascii : local patient identification
-    header.patientId = CodecUtils.getString8FromBuffer( this._inputBuffer , 80, offset).trim();
+    header.patientId = codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 80, offset).trim();
     offset += 80;
 
     // 80 ascii : local recording identification
-    header.localRecordingId = CodecUtils.getString8FromBuffer( this._inputBuffer , 80, offset).trim();
+    header.localRecordingId = codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 80, offset).trim();
     offset += 80;
 
     // 8 ascii : startdate of recording (dd.mm.yy)
-    var recordingStartDate = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
+    var recordingStartDate = codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
     offset += 8;
 
     // 8 ascii : starttime of recording (hh.mm.ss)
-    var recordingStartTime = CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
+    var recordingStartTime = codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim();
     offset += 8;
 
     var date = recordingStartDate.split(".");
@@ -90,23 +90,23 @@ class EdfDecoder {
     header.recordingDate = new Date( date[2], date[1], date[0], time[0], time[1], time[2], 0 );
 
     // 8 ascii : number of bytes in header record
-    header.nbBytesHeaderRecord = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
+    header.nbBytesHeaderRecord = parseInt( codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
     offset += 8;
 
     // 44 ascii : reserved
-    header.reserved = CodecUtils.getString8FromBuffer( this._inputBuffer , 44, offset);
+    header.reserved = codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 44, offset);
     offset += 44;
 
     // 8 ascii : number of data records (-1 if unknown)
-    header.nbDataRecords = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
+    header.nbDataRecords = parseInt( codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
     offset += 8;
 
     // 8 ascii : duration of a data record, in seconds
-    header.durationDataRecordsSec = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
+    header.durationDataRecordsSec = parseInt( codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
     offset += 8;
 
     // 4 ascii : number of signals (ns) in data record
-    header.nbSignals = parseInt( CodecUtils.getString8FromBuffer( this._inputBuffer , 4, offset).trim() );
+    header.nbSignals = parseInt( codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 4, offset).trim() );
     offset += 4;
 
     // the following fields occurs ns time in a row each
@@ -114,7 +114,7 @@ class EdfDecoder {
     function getAllSections( sizeOfEachThing ){
       var allThings = [];
       for(var i=0; i<header.nbSignals; i++){
-        allThings.push( CodecUtils.getString8FromBuffer( that._inputBuffer , sizeOfEachThing, offset ).trim() );
+        allThings.push( codecutils.CodecUtils.getString8FromBuffer( that._inputBuffer , sizeOfEachThing, offset ).trim() );
         offset += sizeOfEachThing;
       }
       return allThings;
@@ -198,7 +198,7 @@ class EdfDecoder {
     for(var r=0; r<header.nbDataRecords; r++){
       for(var ns=0; ns<header.nbSignals; ns++){
         var signalNbSamples = header.signalInfo[ns].nbOfSamples;
-        var rawSignal = CodecUtils.extractTypedArray( this._inputBuffer, byteOffset, sampleType, signalNbSamples );
+        var rawSignal = codecutils.CodecUtils.extractTypedArray( this._inputBuffer, byteOffset, sampleType, signalNbSamples );
         byteOffset += signalNbSamples * sampleType.BYTES_PER_ELEMENT;
         rawSignals[ns][r] = rawSignal;
 
