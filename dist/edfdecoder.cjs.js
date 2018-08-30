@@ -1440,8 +1440,16 @@ var EdfDecoder = function () {
       offset += 8;
 
       var date = recordingStartDate.split(".");
+      // y2k
+      var year = 1900;
+      if (date[2] >= 85) {
+        year = 1900 + Number(date[2]);
+      } else {
+        year = 2000 + Number(date[2]);
+      }
       var time = recordingStartTime.split(".");
-      header.recordingDate = new Date(date[2], date[1], date[0], time[0], time[1], time[2], 0);
+
+      header.recordingDate = new Date(date[2], Number(date[1] - 1), date[0], time[0], time[1], time[2], 0);
 
       // 8 ascii : number of bytes in header record
       header.nbBytesHeaderRecord = parseInt(codecutils.CodecUtils.getString8FromBuffer(this._inputBuffer, 8, offset).trim());
