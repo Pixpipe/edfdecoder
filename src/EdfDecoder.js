@@ -87,6 +87,7 @@ class EdfDecoder {
 
     var date = recordingStartDate.split(".");
     var time = recordingStartTime.split(".");
+
     header.recordingDate = new Date( date[2], Number(date[1] - 1), date[0], time[0], time[1], time[2], 0 );
 
     // 8 ascii : number of bytes in header record
