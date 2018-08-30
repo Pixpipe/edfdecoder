@@ -1451,7 +1451,7 @@
 	      }
 	      var time = recordingStartTime.split(".");
 
-	      header.recordingDate = new Date(date[2], Number(date[1] - 1), date[0], time[0], time[1], time[2], 0);
+	      header.recordingDate = new Date(year, Number(date[1] - 1), date[0], time[0], time[1], time[2], 0);
 
 	      // 8 ascii : number of bytes in header record
 	      header.nbBytesHeaderRecord = parseInt(codecutils.CodecUtils.getString8FromBuffer(this._inputBuffer, 8, offset).trim());
