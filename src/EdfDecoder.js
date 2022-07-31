@@ -102,7 +102,7 @@ class EdfDecoder {
     offset += 8;
 
     // 8 ascii : duration of a data record, in seconds
-    header.durationDataRecordsSec = parseInt( codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
+    header.durationDataRecordsSec = parseFloat( codecutils.CodecUtils.getString8FromBuffer( this._inputBuffer , 8, offset).trim() );
     offset += 8;
 
     // 4 ascii : number of signals (ns) in data record
